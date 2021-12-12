@@ -74,7 +74,7 @@ int main(void)
 
             BeginMode3D(camera);
 
-				if(!renderBackface) {
+				if(renderBackface) {
 					rlDisableBackfaceCulling();
 				}
 				for(int i = 0; i < N_MODELS; ++i) {
