@@ -6,6 +6,9 @@
 
 #define N_MODELS 5
 
+bool invertCompare = false;
+bool renderBackface = false;
+
 void InitCamera(Camera *c)
 {
     c->position = (Vector3){ 10.0f, 10.0f, 10.0f };
@@ -33,15 +36,40 @@ int Compare(const void *a, const void *b, void *c)
 	float aDistance = Vector3Mag(Vector3Subtract(*cameraPos, *posA));
 	float bDistance = Vector3Mag(Vector3Subtract(*cameraPos, *posB));
 
-	//return (int)aDistance - bDistance;
-	return (int)bDistance - aDistance;
+	if(!invertCompare)
+		return (int)aDistance - bDistance;
+	else
+		return (int)bDistance - aDistance;
+}
+
+void DrawInfo()
+{
+	DrawRectangle( 10, 10, 320, 173, Fade(SKYBLUE, 0.5f));
+	DrawRectangleLines( 10, 10, 320, 173, BLUE);
+
+	DrawText("Free camera default controls:", 20, 20, 10, BLACK);
+	DrawText("- Mouse Wheel to Zoom in-out", 40, 40, 10, DARKGRAY);
+	DrawText("- Mouse Wheel Pressed to Pan", 40, 60, 10, DARKGRAY);
+	DrawText("- Alt + Mouse Wheel Pressed to Rotate", 40, 80, 10, DARKGRAY);
+	DrawText("- Alt + Ctrl + Mouse Wheel Pressed for Smooth Zoom", 40, 100, 10, DARKGRAY);
+	DrawText("- Z to zoom to (0, 0, 0)", 40, 120, 10, DARKGRAY);
+	DrawText("- R to toggle backface culling", 40, 140, 10, DARKGRAY);
+	DrawText("- T to toggle render order", 40, 160, 10, DARKGRAY);
+
+	DrawRectangle(10, 200, 320, 50, Fade(SKYBLUE, 0.5f));
+	DrawRectangleLines(10, 200, 320, 50, BLUE);
+	DrawText(TextFormat("Rendering Backface: %s",
+				renderBackface ? "true" : "false"),
+			20, 210, 10, BLACK);
+	DrawText(TextFormat("Rendering camera-furthest first: %s",
+				invertCompare ? "false" : "true"),
+			20, 230, 10, BLACK);
 }
 
 int main(void)
 {
     const int screenWidth = 800;
     const int screenHeight = 450;
-	bool renderBackface = false;
 
 	Model models[N_MODELS];
 	Vector3 positions[N_MODELS];
@@ -54,7 +82,7 @@ int main(void)
 
 	for(int i = 0; i < N_MODELS; ++i){
 		models[i] = LoadModel("assets/wall.obj");
-		positions[i] = (Vector3){0.f, 0.f, i};
+		positions[i] = (Vector3){0.f, 0.f, i * 1.1f};
 	}
 
     // Main game loop
@@ -64,6 +92,7 @@ int main(void)
         UpdateCamera(&camera);
         if (IsKeyDown('Z')) camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
 		if (IsKeyPressed('R')) renderBackface = !renderBackface;
+		if (IsKeyPressed('T')) invertCompare = !invertCompare;
 
 		qsort_r(models, N_MODELS, sizeof(Model), Compare, &(camera.position));
 		qsort_r(positions, N_MODELS, sizeof(Vector3), Compare, &(camera.position));
@@ -85,16 +114,7 @@ int main(void)
                 DrawGrid(10, 1.0f);
             EndMode3D();
 
-            DrawRectangle( 10, 10, 320, 153, Fade(SKYBLUE, 0.5f));
-            DrawRectangleLines( 10, 10, 320, 153, BLUE);
-
-            DrawText("Free camera default controls:", 20, 20, 10, BLACK);
-            DrawText("- Mouse Wheel to Zoom in-out", 40, 40, 10, DARKGRAY);
-            DrawText("- Mouse Wheel Pressed to Pan", 40, 60, 10, DARKGRAY);
-            DrawText("- Alt + Mouse Wheel Pressed to Rotate", 40, 80, 10, DARKGRAY);
-            DrawText("- Alt + Ctrl + Mouse Wheel Pressed for Smooth Zoom", 40, 100, 10, DARKGRAY);
-            DrawText("- Z to zoom to (0, 0, 0)", 40, 120, 10, DARKGRAY);
-			DrawText("- R to toggle backface culling", 40, 140, 10, DARKGRAY);
+		DrawInfo();
 
         EndDrawing();
     }
