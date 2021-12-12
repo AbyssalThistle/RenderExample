@@ -2,9 +2,10 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 #include <stdlib.h>
 
-#define N_MODELS 5
+#define N_MODELS 1
 
 bool invertCompare = false;
 bool renderBackface = false;
@@ -73,6 +74,8 @@ int main(void)
 
 	Model models[N_MODELS];
 	Vector3 positions[N_MODELS];
+	Shader shader = LoadShader(NULL, "assets/alpha_discard.fs");
+	//Shader shader = LoadShader(NULL, "assets/model_fog.fs");
 
     InitWindow(screenWidth, screenHeight, "raylib");
     SetTargetFPS(60);
@@ -82,6 +85,7 @@ int main(void)
 
 	for(int i = 0; i < N_MODELS; ++i){
 		models[i] = LoadModel("assets/wall.obj");
+		models[i].materials[0].shader = shader;
 		positions[i] = (Vector3){0.f, 0.f, i * 1.1f};
 	}
 
@@ -96,6 +100,7 @@ int main(void)
 
 		qsort_r(models, N_MODELS, sizeof(Model), Compare, &(camera.position));
 		qsort_r(positions, N_MODELS, sizeof(Vector3), Compare, &(camera.position));
+		rlSetBlendMode(RL_BLEND_ALPHA);
 
 		// Render
         BeginDrawing();
