@@ -5,7 +5,7 @@
 #include "rlgl.h"
 #include <stdlib.h>
 
-#define N_MODELS 1
+#define N_MODELS 5
 
 bool invertCompare = false;
 bool renderBackface = false;
@@ -85,7 +85,7 @@ int main(void)
 	for(int i = 0; i < N_MODELS; ++i){
 		models[i] = LoadModel("assets/wall.obj");
 		models[i].materials[0].shader = shader;
-		positions[i] = (Vector3){0.f, 0.f, i * 1.1f};
+		positions[i] = (Vector3){0.f, 0.f, i * 1.001};
 	}
 
 	// Main game loop
