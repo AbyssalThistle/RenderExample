@@ -12,12 +12,12 @@ bool renderBackface = false;
 
 void InitCamera(Camera *c)
 {
-    c->position = (Vector3){ 10.0f, 10.0f, 10.0f };
-    c->target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    c->up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    c->fovy = 45.0f;
-    c->projection = CAMERA_PERSPECTIVE;
-    SetCameraMode(*c, CAMERA_FREE);
+	c->position = (Vector3){ 10.0f, 10.0f, 10.0f };
+	c->target = (Vector3){ 0.0f, 0.0f, 0.0f };
+	c->up = (Vector3){ 0.0f, 1.0f, 0.0f };
+	c->fovy = 45.0f;
+	c->projection = CAMERA_PERSPECTIVE;
+	SetCameraMode(*c, CAMERA_FREE);
 }
 
 float Vector3Mag(Vector3 vec)
@@ -69,18 +69,17 @@ void DrawInfo()
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+	const int screenWidth = 800;
+	const int screenHeight = 450;
 
 	Model models[N_MODELS];
 	Vector3 positions[N_MODELS];
-	Shader shader = LoadShader(NULL, "assets/alpha_discard.fs");
-	//Shader shader = LoadShader(NULL, "assets/model_fog.fs");
 
-    InitWindow(screenWidth, screenHeight, "raylib");
-    SetTargetFPS(60);
+	InitWindow(screenWidth, screenHeight, "raylib");
+	SetTargetFPS(60);
+	Shader shader = LoadShader(0, "assets/alpha_discard.fs");
 
-    Camera3D camera = { 0 };
+	Camera3D camera = { 0 };
 	InitCamera(&camera);
 
 	for(int i = 0; i < N_MODELS; ++i){
@@ -89,12 +88,12 @@ int main(void)
 		positions[i] = (Vector3){0.f, 0.f, i * 1.1f};
 	}
 
-    // Main game loop
-    while (!WindowShouldClose())
-    {
+	// Main game loop
+	while (!WindowShouldClose())
+	{
 		// Update
-        UpdateCamera(&camera);
-        if (IsKeyDown('Z')) camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
+		UpdateCamera(&camera);
+		if (IsKeyDown('Z')) camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
 		if (IsKeyPressed('R')) renderBackface = !renderBackface;
 		if (IsKeyPressed('T')) invertCompare = !invertCompare;
 
@@ -103,10 +102,10 @@ int main(void)
 		rlSetBlendMode(RL_BLEND_ALPHA);
 
 		// Render
-        BeginDrawing();
-            ClearBackground(DARKGRAY);
+		BeginDrawing();
+			ClearBackground(DARKGRAY);
 
-            BeginMode3D(camera);
+			BeginMode3D(camera);
 
 				if(renderBackface) {
 					rlDisableBackfaceCulling();
@@ -116,15 +115,15 @@ int main(void)
 				}
 				rlEnableBackfaceCulling();
 
-                DrawGrid(10, 1.0f);
-            EndMode3D();
+				DrawGrid(10, 1.0f);
+			EndMode3D();
 
 		DrawInfo();
 
-        EndDrawing();
-    }
+		EndDrawing();
+	}
 
-    CloseWindow();        // Close window and OpenGL context
+	CloseWindow();		// Close window and OpenGL context
 
-    return 0;
+	return 0;
 }
